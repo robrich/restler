@@ -728,3 +728,20 @@ module.exports['Timeout'] = {
     });
   }
 };
+
+module.exports['MissingServer'] = {
+  // no setUp or tearDown: the server isn't running
+
+  'will timeout within given time': function(test) {
+    rest.get(host + '/timeout', {timeout: 50})
+    .on('timeout', function () {
+      test.ok(true, 'timeout endpoint is 100ms and timeout was 50ms');
+      test.done();
+    })
+    .on('complete', function () {
+      test.ok(err.code === 'ECONNREFUSED', 'timeout is reported as ECONNREFUSED');
+      test.ok(false, 'should not emit complete event');
+      test.done();
+    });
+  }
+};
